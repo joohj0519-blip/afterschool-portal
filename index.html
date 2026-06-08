@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>방과후학교 통합시스템</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: #0b1a2e;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .bg-grid {
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,200,180,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,200,180,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .bg-glow {
+      position: fixed;
+      width: 800px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,200,180,0.07) 0%, transparent 70%);
+      top: -250px; left: 50%;
+      transform: translateX(-50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .portal-inner {
+      position: relative; z-index: 1;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 60px 32px 40px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    /* ── 헤더 ── */
+    .header { text-align: center; margin-bottom: 48px; }
+
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: #00c8b4;
+      border: 1px solid rgba(0,200,180,0.3);
+      border-radius: 20px;
+      padding: 4px 16px;
+      margin-bottom: 18px;
+      text-transform: uppercase;
+    }
+
+    .title-main {
+      font-size: 26px;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.4;
+      margin-bottom: 10px;
+    }
+
+    .title-sub {
+      font-size: 13px;
+      color: rgba(255,255,255,0.4);
+      font-weight: 300;
+      letter-spacing: 0.05em;
+    }
+
+    .divider {
+      width: 40px; height: 2px;
+      background: linear-gradient(90deg, #00c8b4, transparent);
+      margin: 20px auto 0;
+    }
+
+    /* ── 상태바 ── */
+    .status-bar {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 14px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 36px;
+    }
+
+    .status-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #66d96a; display: inline-block; margin-right: 8px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    .status-text { font-size: 12px; color: rgba(255,255,255,0.4); font-weight: 300; }
+    .status-time { font-size: 11px; color: rgba(255,255,255,0.25); font-weight: 300; }
+
+    /* ── 카드 그리드 ── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 36px;
+    }
+
+    .sys-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      padding: 32px 26px 60px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+      display: block;
+    }
+
+    .sys-card::before {
+      content: ''; position: absolute;
+      top: 0; left: 0; right: 0; height: 2px;
+      border-radius: 18px 18px 0 0;
+      opacity: 0; transition: opacity 0.3s;
+    }
+
+    .sys-card:hover {
+      background: rgba(255,255,255,0.07);
+      border-color: rgba(255,255,255,0.15);
+      transform: translateY(-4px);
+    }
+
+    .sys-card:hover::before { opacity: 1; }
+
+    .card-teal::before { background: linear-gradient(90deg, #00c8b4, #00e8d0); }
+    .card-blue::before  { background: linear-gradient(90deg, #4b9eff, #7bb8ff); }
+    .card-green::before { background: linear-gradient(90deg, #66d96a, #9aeea0); }
+
+    .card-icon {
+      width: 48px; height: 48px;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+
+    .icon-teal  { background: rgba(0,200,180,0.12); color: #00c8b4; }
+    .icon-blue  { background: rgba(75,158,255,0.12); color: #4b9eff; }
+    .icon-green { background: rgba(102,217,106,0.12); color: #66d96a; }
+
+    .card-label {
+      font-size: 11px; font-weight: 500;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .label-teal  { color: #00c8b4; }
+    .label-blue  { color: #4b9eff; }
+    .label-green { color: #66d96a; }
+
+    .card-title {
+      font-size: 16px; font-weight: 500;
+      color: #ffffff; margin-bottom: 10px; line-height: 1.4;
+    }
+
+    .card-desc {
+      font-size: 12px; color: rgba(255,255,255,0.35);
+      line-height: 1.8; font-weight: 300;
+    }
+
+    .card-arrow {
+      position: absolute; bottom: 24px; right: 24px;
+      font-size: 18px; color: rgba(255,255,255,0.2);
+      transition: all 0.2s;
+    }
+
+    .sys-card:hover .card-arrow {
+      color: rgba(255,255,255,0.55);
+      transform: translate(2px, -2px);
+    }
+
+    .card-url {
+      position: absolute; bottom: 26px; left: 26px;
+      font-size: 10px; color: rgba(255,255,255,0.13);
+      font-weight: 300;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      max-width: 65%;
+    }
+
+    /* ── 푸터 ── */
+    .footer { text-align: center; padding-top: 8px; }
+    .footer-text {
+      font-size: 12px; color: rgba(255,255,255,0.18);
+      letter-spacing: 0.08em; font-style: italic; font-weight: 300;
+    }
+    .footer-accent { color: rgba(0,200,180,0.45); }
+
+    /* ── 반응형 ── */
+    @media (max-width: 680px) {
+      .cards-grid { grid-template-columns: 1fr; }
+      .portal-inner { padding: 40px 20px 32px; }
+      .title-main { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+
+  <div class="portal-inner">
+
+    <div class="header">
+      <div class="badge">Admin Portal</div>
+      <div class="title-main">방과후학교 통합시스템</div>
+      <div class="title-sub">신청 · 출결 · 수업일지 · 수강료 · 강사료 일괄지원</div>
+      <div class="divider"></div>
+    </div>
+
+    <div class="status-bar">
+      <div>
+        <span class="status-dot"></span>
+        <span class="status-text">모든 시스템 정상 운영 중</span>
+      </div>
+      <span class="status-time" id="now-time"></span>
+    </div>
+
+    <div class="cards-grid">
+
+      <!-- System 01: 신청 -->
+      <a class="sys-card card-teal" href="https://ss-afterschoolplus.vercel.app" target="_blank" rel="noopener">
+        <div class="card-icon icon-teal">📋</div>
+        <div class="card-label label-teal">System 01</div>
+        <div class="card-title">방과후학교<br>신청 시스템</div>
+        <div class="card-desc">학부모 수강 신청<br>접수 및 현황 관리</div>
+        <span class="card-url">ss-afterschoolplus.vercel.app</span>
+        <span class="card-arrow">↗</span>
+      </a>
+
+      <!-- System 02: 출결·수업일지 -->
+      <a class="sys-card card-blue" href="https://afterschool-app-seven.vercel.app" target="_blank" rel="noopener">
+        <div class="card-icon icon-blue">📝</div>
+        <div class="card-label label-blue">System 02</div>
+        <div class="card-title">강사 출결 &amp;<br>수업일지</div>
+        <div class="card-desc">강사 출석 확인<br>수업일지 기록 관리</div>
+        <span class="card-url">afterschool-app-seven.vercel.app</span>
+        <span class="card-arrow">↗</span>
+      </a>
+
+      <!-- System 03: 수강료·강사료 -->
+      <a class="sys-card card-green" href="https://aftershool-excel-git-main-joohj-s-projects.vercel.app" target="_blank" rel="noopener">
+        <div class="card-icon icon-green">💰</div>
+        <div class="card-label label-green">System 03</div>
+        <div class="card-title">수강료 · 강사료<br>계산 시스템</div>
+        <div class="card-desc">수강료 및 강사료<br>자동 계산 · 정산</div>
+        <span class="card-url">aftershool-excel...vercel.app</span>
+        <span class="card-arrow">↗</span>
+      </a>
+
+    </div>
+
+    <div class="footer">
+      <span class="footer-text"><span class="footer-accent">by</span> spero spera</span>
+    </div>
+
+  </div>
+
+  <script>
+    // 현재 시간 실시간 표시
+    function updateTime() {
+      const el = document.getElementById('now-time');
+      if (!el) return;
+      const now = new Date();
+      const pad = n => String(n).padStart(2, '0');
+      const days = ['일','월','화','수','목','금','토'];
+      el.textContent =
+        `${now.getFullYear()}.${pad(now.getMonth()+1)}.${pad(now.getDate())} `
+        + `(${days[now.getDay()]}) ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+    }
+    updateTime();
+    setInterval(updateTime, 60000);
+  </script>
+
+</body>
+</html>
